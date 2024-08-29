@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043f55fb0c0d496aabbb9d6be08f8019, type: 3}
+  m_Name: Barracks
+  m_EditorClassIdentifier: 
+  pieceName: Barracks
+  pieceSprite: {fileID: 0}
+  pieceSize: {x: 4, y: 4}
+  boardPiecePrefab: {fileID: 2061802243955526200, guid: 7a00fe718516d6d4695f8e3baf21fb3f, type: 3}
+  health: 100
