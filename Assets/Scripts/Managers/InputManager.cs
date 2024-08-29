@@ -26,8 +26,27 @@ public class InputManager : PersistentSingleton<InputManager>
             case InputState.CreatingProduct:
                 CreatingProductUpdate();
                 break;
+            case InputState.PieceSelected:
+                PieceSelectedUpdate();
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+    }
+    private void PieceSelectedUpdate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
+
+            if (hit.collider is null) return;
+
+            if (BoardManager.Instance.CheckIfSelectedPiece(worldPosition))
+            {
+                
+                _inputState = InputState.PieceSelected;
+            }
         }
     }
     private void IdleUpdate()
@@ -42,7 +61,6 @@ public class InputManager : PersistentSingleton<InputManager>
             if (BoardManager.Instance.CheckIfSelectedPiece(worldPosition))
             {
                 _inputState = InputState.PieceSelected;
-                
             }
         }
     }
@@ -60,6 +78,7 @@ public class InputManager : PersistentSingleton<InputManager>
             {
                 BoardManager.Instance.DestroyProduct();
                 _inputState = InputState.Idle;
+                return;
             }
 
             if (!BoardManager.Instance.IsProductPlaceAvailable(worldPosition))

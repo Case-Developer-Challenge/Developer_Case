@@ -38,7 +38,7 @@ namespace Board
                     gridCell.transform.localPosition = new Vector3(posX, posY, -.1f);
                     if (row == 0 && col == 0)
                         _firstPieceOffset = gridCell.transform.position;
-                    _boardWorldPosition.Add(new Vector2Int(row, col), gridCell.transform.position);
+                    _boardWorldPosition.Add(new Vector2Int(col, row), gridCell.transform.position);
                 }
             }
         }
@@ -69,15 +69,15 @@ namespace Board
             var cellOffset = (objectSize - Vector2.one) * CellSizeWithSpacing / 2;
             var bottomLeft = objectPosInGridWorld - cellOffset;
 
-            return GetClosestCell(bottomLeft);
+            return GetClosestCell(bottomLeft);  
         }
-        public Vector2Int GetClosestCell(Vector2 position)
+        public Vector2Int GetClosestCell(Vector2 position, bool withOffset = false)
         {
             // Find the closest grid cell based on object position
-            var closestCol = Mathf.RoundToInt(position.x / CellSizeWithSpacing);
-            var closestRow = Mathf.RoundToInt(position.y / CellSizeWithSpacing);
+            var closestCol = Mathf.RoundToInt(((withOffset ? -_firstPieceOffset.x : 0) + position.x) / CellSizeWithSpacing);
+            var closestRow = Mathf.RoundToInt(((withOffset ? -_firstPieceOffset.y : 0) + position.y) / CellSizeWithSpacing);
 
-            return new Vector2Int(closestRow, closestCol);
+            return new Vector2Int(closestCol, closestRow);
         }
         private bool IsValidGridCell(Vector2Int cell)
         {
