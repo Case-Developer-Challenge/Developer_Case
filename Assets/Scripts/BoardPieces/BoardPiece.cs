@@ -20,13 +20,15 @@ public abstract class BoardPiece : MonoBehaviour
     {
         BottomLeftCell = bottomLeftGridCell;
     }
-
     public virtual void SelectPiece()
     {
         image.color = Color.red;
+
+        ProductionManager.Instance.ChangeProductPanel(BoardPieceData.products);
     }
     public virtual void DeselectPiece()
     {
         image.color = Color.white;
+        ProductionManager.Instance.ResetStartProducts();
     }
 }

@@ -5,17 +5,6 @@ using UnityEngine;
 public class InputManager : PersistentSingleton<InputManager>
 {
     private InputState _inputState = InputState.Idle;
-    public void ProductSelected(BoardPieceData boardPiece)
-    {
-        if (_inputState == InputState.CreatingProduct)
-        {
-            //todo change piece
-            return;
-        }
-
-        _inputState = InputState.CreatingProduct;
-        BoardManager.Instance.CreateProductPiece(boardPiece);
-    }
     private void Update()
     {
         switch (_inputState)
@@ -33,6 +22,16 @@ public class InputManager : PersistentSingleton<InputManager>
                 throw new ArgumentOutOfRangeException();
         }
     }
+    public void ProductSelected(BoardPieceData boardPiece)
+    {
+        if (_inputState == InputState.CreatingProduct)
+            return;
+
+        
+        _inputState = InputState.CreatingProduct;
+        
+        BoardManager.Instance.CreateProductPiece(boardPiece);
+    }
     private void PieceSelectedUpdate()
     {
         if (Input.GetMouseButtonDown(0))
@@ -42,11 +41,11 @@ public class InputManager : PersistentSingleton<InputManager>
 
             if (hit.collider is null) return;
 
-            if (BoardManager.Instance.CheckIfSelectedPiece(worldPosition))
+            if (BoardManager.Instance.SelectPiece(worldPosition))
             {
-                
                 _inputState = InputState.PieceSelected;
             }
+            else _inputState = InputState.Idle;
         }
     }
     private void IdleUpdate()
@@ -58,7 +57,7 @@ public class InputManager : PersistentSingleton<InputManager>
 
             if (hit.collider is null) return;
 
-            if (BoardManager.Instance.CheckIfSelectedPiece(worldPosition))
+            if (BoardManager.Instance.SelectPiece(worldPosition))
             {
                 _inputState = InputState.PieceSelected;
             }

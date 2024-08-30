@@ -17,3 +17,7 @@ MonoBehaviour:
   pieceSize: {x: 4, y: 4}
   boardPiecePrefab: {fileID: 2061802243955526200, guid: 7a00fe718516d6d4695f8e3baf21fb3f, type: 3}
   health: 100
+  products:
+  - {fileID: 11400000, guid: f1b3f9e6f616397448e3cec9bde11951, type: 2}
+  - {fileID: 11400000, guid: 9f1a8450c453ee8498e9f924fd75a2f3, type: 2}
+  - {fileID: 11400000, guid: 01e0a7a13db896143adb4945892d0fea, type: 2}

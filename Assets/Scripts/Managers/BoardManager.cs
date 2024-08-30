@@ -25,6 +25,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
     }
     public void CreateProductPiece(BoardPieceData boardPiece)
     {
+        DeselectCurrentPiece();
         _createdPiece = Instantiate(boardPiece.boardPiecePrefab, boardPieceParent);
         _createdPiece.Initialize(boardPiece);
     }
@@ -72,7 +73,6 @@ public class BoardManager : PersistentSingleton<BoardManager>
         for (var x = 0; x < _createdPiece.BoardPieceData.pieceSize.x; x++)
             for (var y = 0; y < _createdPiece.BoardPieceData.pieceSize.y; y++)
             {
-                print(new Vector2Int(bottomLeftGridCell.x + x, bottomLeftGridCell.y + y) + " piecePos ");
                 _boardPieces[new Vector2Int(bottomLeftGridCell.x + x, bottomLeftGridCell.y + y)] = _createdPiece;
             }
     }
@@ -81,26 +81,44 @@ public class BoardManager : PersistentSingleton<BoardManager>
         Destroy(_createdPiece.gameObject);
         _createdPiece = null;
     }
-    public bool CheckIfSelectedPiece(Vector3 worldPosition)
+    public bool SelectPiece(Vector3 worldPosition)
     {
         var selectedGrid = _boardGridController.GetClosestCell(worldPosition, true);
-        if (_selectedPiece is not null)
-        {
-            _selectedPiece.DeselectPiece();
-            UIManager.Instance.informationPanel.PieceDeSelected();
-        }
+
+        //if not in bounds return the current state 
+        if (selectedGrid.x > rows - 1 || +selectedGrid.x < 0)
+            return _selectedPiece is not null;
+        if (selectedGrid.y > columns - 1 || selectedGrid.y < 0)
+            return _selectedPiece is not null;
 
         if (_boardPieces.TryGetValue(selectedGrid, out var piece))
         {
             if (piece is null)
+            {
+                DeselectCurrentPiece();
                 return false;
+            }
+            if (_selectedPiece == piece)
+            {
+                DeselectCurrentPiece();
+                return false;
+            }
+
+            DeselectCurrentPiece();
             _selectedPiece = piece;
             _selectedPiece.SelectPiece();
             UIManager.Instance.informationPanel.PieceSelected(_selectedPiece);
-
             return true;
         }
 
         return false;
+    }
+    private void DeselectCurrentPiece()
+    {
+        if (_selectedPiece is null) return;
+
+        _selectedPiece.DeselectPiece();
+        UIManager.Instance.informationPanel.PieceDeSelected();
+        _selectedPiece = null;
     }
 }
