@@ -31,4 +31,5 @@ public abstract class BoardPiece : MonoBehaviour
         image.color = Color.white;
         ProductionManager.Instance.ResetStartProducts();
     }
+    public abstract bool SetTarget(Vector2Int selectedGrid, BoardPiece piece);
 }

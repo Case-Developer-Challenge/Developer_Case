@@ -27,9 +27,9 @@ public class InputManager : PersistentSingleton<InputManager>
         if (_inputState == InputState.CreatingProduct)
             return;
 
-        
+
         _inputState = InputState.CreatingProduct;
-        
+
         BoardManager.Instance.CreateProductPiece(boardPiece);
     }
     private void PieceSelectedUpdate()
@@ -41,11 +41,20 @@ public class InputManager : PersistentSingleton<InputManager>
 
             if (hit.collider is null) return;
 
+            //don't change piece if selected piece can target
+            if (BoardManager.Instance.SetTargetToSelectedPiece(worldPosition))
+            {
+                return;
+            }
+
             if (BoardManager.Instance.SelectPiece(worldPosition))
             {
                 _inputState = InputState.PieceSelected;
             }
-            else _inputState = InputState.Idle;
+            else
+            {
+                _inputState = InputState.Idle;
+            }
         }
     }
     private void IdleUpdate()

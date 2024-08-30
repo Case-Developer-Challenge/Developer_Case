@@ -72,9 +72,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
         _createdPiece.PutPieceDown(bottomLeftGridCell);
         for (var x = 0; x < _createdPiece.BoardPieceData.pieceSize.x; x++)
             for (var y = 0; y < _createdPiece.BoardPieceData.pieceSize.y; y++)
-            {
                 _boardPieces[new Vector2Int(bottomLeftGridCell.x + x, bottomLeftGridCell.y + y)] = _createdPiece;
-            }
     }
     public void DestroyProduct()
     {
@@ -85,20 +83,9 @@ public class BoardManager : PersistentSingleton<BoardManager>
     {
         var selectedGrid = _boardGridController.GetClosestCell(worldPosition, true);
 
-        //if not in bounds return the current state 
-        if (selectedGrid.x > rows - 1 || +selectedGrid.x < 0)
-            return _selectedPiece is not null;
-        if (selectedGrid.y > columns - 1 || selectedGrid.y < 0)
-            return _selectedPiece is not null;
-
         if (_boardPieces.TryGetValue(selectedGrid, out var piece))
         {
-            if (piece is null)
-            {
-                DeselectCurrentPiece();
-                return false;
-            }
-            if (_selectedPiece == piece)
+            if (piece is null || _selectedPiece == piece)
             {
                 DeselectCurrentPiece();
                 return false;
@@ -111,7 +98,21 @@ public class BoardManager : PersistentSingleton<BoardManager>
             return true;
         }
 
+        //if not in bounds return the current state 
+        return _selectedPiece is not null;
+    }
+    public bool SetTargetToSelectedPiece(Vector3 worldPosition)
+    {
+        var targetGrid = _boardGridController.GetClosestCell(worldPosition, true);
+
+        if (_boardPieces.TryGetValue(targetGrid, out var piece))
+            return _selectedPiece.SetTarget(targetGrid, piece);
+
         return false;
+    }
+    public bool IsPieceEmpty(Vector2Int pos)
+    {
+        return _boardPieces.ContainsKey(pos) && _boardPieces[pos] == null;
     }
     private void DeselectCurrentPiece()
     {
@@ -120,5 +121,24 @@ public class BoardManager : PersistentSingleton<BoardManager>
         _selectedPiece.DeselectPiece();
         UIManager.Instance.informationPanel.PieceDeSelected();
         _selectedPiece = null;
+    }
+    public void MovePieceFrom(Vector2Int startLeftBottomPoint, Vector2Int moveLeftBottomPoint, BoardPiece piece)
+    {
+        Vector2Int direction = moveLeftBottomPoint - startLeftBottomPoint;
+        var newPositionsList = new List<Vector2Int>();
+        for (int x = 0; x < piece.BoardPieceData.pieceSize.x; x++)
+        {
+            for (int y = 0; y < piece.BoardPieceData.pieceSize.y; y++)
+            {
+                var oldPosition = new Vector2Int(piece.BottomLeftCell.x + x, piece.BottomLeftCell.y + y);
+                newPositionsList.Add(oldPosition + direction);
+                _boardPieces[oldPosition] = null;
+            }
+        }
+
+        foreach (var newPosition in newPositionsList)
+            _boardPieces[newPosition] = piece;
+        piece.PutPieceDown(moveLeftBottomPoint);
+        piece.transform.position += (Vector3)(_boardGridController.CellSizeWithSpacing * (Vector2)direction);
     }
 }
