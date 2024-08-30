@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Board;
 using Managers;
 using UnityEngine;
@@ -106,7 +107,11 @@ public class BoardManager : PersistentSingleton<BoardManager>
         var targetGrid = _boardGridController.GetClosestCell(worldPosition, true);
 
         if (_boardPieces.TryGetValue(targetGrid, out var piece))
+        {
+            if (_selectedPiece == piece)
+                return false;
             return _selectedPiece.SetTarget(targetGrid, piece);
+        }
 
         return false;
     }
@@ -114,21 +119,13 @@ public class BoardManager : PersistentSingleton<BoardManager>
     {
         return _boardPieces.ContainsKey(pos) && _boardPieces[pos] == null;
     }
-    private void DeselectCurrentPiece()
-    {
-        if (_selectedPiece is null) return;
-
-        _selectedPiece.DeselectPiece();
-        UIManager.Instance.informationPanel.PieceDeSelected();
-        _selectedPiece = null;
-    }
     public void MovePieceFrom(Vector2Int startLeftBottomPoint, Vector2Int moveLeftBottomPoint, BoardPiece piece)
     {
-        Vector2Int direction = moveLeftBottomPoint - startLeftBottomPoint;
+        var direction = moveLeftBottomPoint - startLeftBottomPoint;
         var newPositionsList = new List<Vector2Int>();
-        for (int x = 0; x < piece.BoardPieceData.pieceSize.x; x++)
+        for (var x = 0; x < piece.BoardPieceData.pieceSize.x; x++)
         {
-            for (int y = 0; y < piece.BoardPieceData.pieceSize.y; y++)
+            for (var y = 0; y < piece.BoardPieceData.pieceSize.y; y++)
             {
                 var oldPosition = new Vector2Int(piece.BottomLeftCell.x + x, piece.BottomLeftCell.y + y);
                 newPositionsList.Add(oldPosition + direction);
@@ -140,5 +137,40 @@ public class BoardManager : PersistentSingleton<BoardManager>
             _boardPieces[newPosition] = piece;
         piece.PutPieceDown(moveLeftBottomPoint);
         piece.transform.position += (Vector3)(_boardGridController.CellSizeWithSpacing * (Vector2)direction);
+    }
+    public void PieceDestroyed(BoardPiece boardPiece)
+    {
+        if (_selectedPiece == boardPiece) 
+            DeselectCurrentPiece();
+        for (var x = 0; x < boardPiece.BoardPieceData.pieceSize.x; x++)
+            for (var y = 0; y < boardPiece.BoardPieceData.pieceSize.y; y++) 
+                _boardPieces[new Vector2Int(boardPiece.BottomLeftCell.x + x, boardPiece.BottomLeftCell.y + y)] = null;
+    }
+    public List<Vector2Int> GetSurroundingEmptySpots(BoardPiece piece)
+    {
+        var emptySpots = new List<Vector2Int>();
+        var piecePosition = piece.BottomLeftCell;
+        var pieceSize = piece.BoardPieceData.pieceSize;
+
+        var directions = new List<Vector2Int> { new(0, 1), new(0, -1), new(1, 0), new(-1, 0) };
+
+        foreach (var direction in directions)
+            for (var x = 0; x < pieceSize.x; x++)
+                for (var y = 0; y < pieceSize.y; y++)
+                {
+                    var checkCell = piecePosition + direction + new Vector2Int(x, y);
+                    if (_boardGridController.IsValidGridCell(checkCell) && _boardPieces[checkCell] == null)
+                        emptySpots.Add(checkCell);
+                }
+
+        return emptySpots;
+    }
+    private void DeselectCurrentPiece()
+    {
+        if (_selectedPiece is null) return;
+
+        _selectedPiece.DeselectPiece();
+        UIManager.Instance.informationPanel.PieceDeSelected();
+        _selectedPiece = null;
     }
 }

@@ -41,12 +41,6 @@ public class InputManager : PersistentSingleton<InputManager>
 
             if (hit.collider is null) return;
 
-            //don't change piece if selected piece can target
-            if (BoardManager.Instance.SetTargetToSelectedPiece(worldPosition))
-            {
-                return;
-            }
-
             if (BoardManager.Instance.SelectPiece(worldPosition))
             {
                 _inputState = InputState.PieceSelected;
@@ -55,6 +49,13 @@ public class InputManager : PersistentSingleton<InputManager>
             {
                 _inputState = InputState.Idle;
             }
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
+            if (hit.collider is null) return;
+            BoardManager.Instance.SetTargetToSelectedPiece(worldPosition);
         }
     }
     private void IdleUpdate()

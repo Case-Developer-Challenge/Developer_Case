@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f516ae874541ed91d0aa7c45e83e8d, type: 3}
   m_Name: Soldier1
   m_EditorClassIdentifier: 
-  pieceName: Soldier3
+  pieceName: Soldier1
   pieceSprite: {fileID: 0}
   pieceSize: {x: 1, y: 1}
   boardPiecePrefab: {fileID: 4156401782758876463, guid: 91050723e1982944cbf4efde9a11e0c3, type: 3}

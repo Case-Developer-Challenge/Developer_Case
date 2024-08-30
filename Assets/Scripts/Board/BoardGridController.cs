@@ -79,7 +79,7 @@ namespace Board
 
             return new Vector2Int(closestCol, closestRow);
         }
-        private bool IsValidGridCell(Vector2Int cell)
+        public bool IsValidGridCell(Vector2Int cell)
         {
             return _boardWorldPosition.ContainsKey(cell);
         }
