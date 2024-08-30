@@ -15,13 +15,16 @@ public class BoardManager : PersistentSingleton<BoardManager>
     private BoardPiece _createdPiece;
     private BoardPiece _selectedPiece;
     private BoardGridController _boardGridController;
+    private BoardVisualController _boardVisualController;
     public float CellSize => _boardGridController.CellSizeWithSpacing;
     protected override void Awake()
     {
         _boardGridController = GetComponent<BoardGridController>();
-        _boardGridController.GenerateGrid(rows, columns, boardGridParent, background.bounds.size);
-        for (var row = 0; row < rows; row++)
-            for (var column = 0; column < columns; column++)
+        _boardVisualController = GetComponent<BoardVisualController>();
+        _boardGridController.GenerateGrid(rows, columns, boardGridParent, background);
+        _boardVisualController.SetCameraPosition(background.size);
+        for (var row = 0; row < columns; row++)
+            for (var column = 0; column < rows; column++)
                 _boardPieces.Add(new Vector2Int(row, column), null);
     }
     public void CreateProductPiece(BoardPieceData boardPiece)
@@ -41,9 +44,9 @@ public class BoardManager : PersistentSingleton<BoardManager>
         for (var x = 0; x < _createdPiece.BoardPieceData.pieceSize.x; x++)
             for (var y = 0; y < _createdPiece.BoardPieceData.pieceSize.y; y++)
             {
-                if (bottomLeftGridCell.x + x > rows - 1 || bottomLeftGridCell.x + x < 0)
+                if (bottomLeftGridCell.x + x > columns - 1 || bottomLeftGridCell.x + x < 0)
                     return false;
-                if (bottomLeftGridCell.y + y > columns - 1 || bottomLeftGridCell.y + y < 0)
+                if (bottomLeftGridCell.y + y > rows - 1 || bottomLeftGridCell.y + y < 0)
                     return false;
             }
 
@@ -56,9 +59,9 @@ public class BoardManager : PersistentSingleton<BoardManager>
         for (var x = 0; x < _createdPiece.BoardPieceData.pieceSize.x; x++)
             for (var y = 0; y < _createdPiece.BoardPieceData.pieceSize.y; y++)
             {
-                if (bottomLeftGridCell.x + x > rows - 1 || bottomLeftGridCell.x + x < 0)
+                if (bottomLeftGridCell.x + x > columns - 1 || bottomLeftGridCell.x + x < 0)
                     return false;
-                if (bottomLeftGridCell.y + y > columns - 1 || bottomLeftGridCell.y + y < 0)
+                if (bottomLeftGridCell.y + y > rows - 1 || bottomLeftGridCell.y + y < 0)
                     return false;
 
                 if (_boardPieces[new Vector2Int(bottomLeftGridCell.x + x, bottomLeftGridCell.y + y)] is not null)
@@ -77,7 +80,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
     }
     public void DestroyProduct()
     {
-        Destroy(_createdPiece.gameObject);
+        PoolManager.Instance.ReturnToPool(_createdPiece);
         _createdPiece = null;
     }
     public bool SelectPiece(Vector3 worldPosition)

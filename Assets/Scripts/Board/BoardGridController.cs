@@ -12,15 +12,15 @@ namespace Board
         private int _rows;
         private int _columns;
         public float CellSizeWithSpacing { get; private set; }
-        public void GenerateGrid(int rows, int columns, Transform gridParent, Vector3 boundsSize)
+        public void GenerateGrid(int rows, int columns, Transform gridParent, SpriteRenderer boundsSize)
         {
             _rows = rows;
             _columns = columns;
             foreach (Transform child in gridParent)
                 Destroy(child.gameObject);
-
-            var cellWidth = (boundsSize.x - (_columns - 1) * cellSpacing) / _columns;
-            var cellHeight = (boundsSize.y - (_rows - 1) * cellSpacing) / _rows;
+            boundsSize.size = new Vector3(columns, rows);
+            var cellWidth = (boundsSize.size.x - (_columns - 1) * cellSpacing) / _columns;
+            var cellHeight = (boundsSize.size.y - (_rows - 1) * cellSpacing) / _rows;
 
             var cellSize = Mathf.Min(cellHeight, cellWidth);
             CellSizeWithSpacing = cellSize + cellSpacing;
@@ -32,8 +32,8 @@ namespace Board
                     var gridCell = Instantiate(gridCellPrefab, gridParent);
 
                     gridCell.transform.localScale = Vector3.one * cellSize;
-                    var posX = col * (cellSize + cellSpacing) - boundsSize.x / 2 + cellSize / 2;
-                    var posY = row * (cellSize + cellSpacing) - boundsSize.y / 2 + cellSize / 2;
+                    var posX = col * (cellSize + cellSpacing) - boundsSize.size.x / 2 + cellSize / 2;
+                    var posY = row * (cellSize + cellSpacing) - boundsSize.size.y / 2 + cellSize / 2;
 
                     gridCell.transform.localPosition = new Vector3(posX, posY, -.1f);
                     if (row == 0 && col == 0)
