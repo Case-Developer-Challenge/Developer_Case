@@ -1,4 +1,4 @@
-using System;
+using Managers;
 using TMPro;
 using UnityEngine;
 
@@ -44,7 +44,7 @@ public abstract class BoardPiece : MonoBehaviour
         if (_currentHealth <= 0)
         {
             IsActive = false;
-            gameObject.SetActive(false);
+            PoolManager.Instance.ReturnToPool(this);
             BoardManager.Instance.PieceDestroyed(this);
         }
     }

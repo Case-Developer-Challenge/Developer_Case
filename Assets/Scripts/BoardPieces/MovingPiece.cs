@@ -65,6 +65,8 @@ public class MovingPiece : BoardPiece
             });
             if (surroundingEmptySpots.Count == 0) // target not Reachable
                 yield break;
+            if (BoardManager.Instance.CheckIfNeighbor(_targetPiece, this))
+                break;
 
             _targetGrid = surroundingEmptySpots[0];
             yield return MoveCoroutine();

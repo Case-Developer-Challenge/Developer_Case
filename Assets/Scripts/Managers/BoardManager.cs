@@ -27,7 +27,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
     public void CreateProductPiece(BoardPieceData boardPiece)
     {
         DeselectCurrentPiece();
-        _createdPiece = Instantiate(boardPiece.boardPiecePrefab, boardPieceParent);
+        _createdPiece = PoolManager.Instance.GetFromPool(boardPiece.boardPiecePrefab,boardPieceParent);
         _createdPiece.Initialize(boardPiece);
     }
     public void MoveProductPiece(Vector3 worldPosition)
@@ -145,6 +145,24 @@ public class BoardManager : PersistentSingleton<BoardManager>
         for (var x = 0; x < boardPiece.BoardPieceData.pieceSize.x; x++)
             for (var y = 0; y < boardPiece.BoardPieceData.pieceSize.y; y++) 
                 _boardPieces[new Vector2Int(boardPiece.BottomLeftCell.x + x, boardPiece.BottomLeftCell.y + y)] = null;
+    }
+    public bool CheckIfNeighbor(BoardPiece piece, BoardPiece neighbor)
+    {
+        var piecePosition = piece.BottomLeftCell;
+        var pieceSize = piece.BoardPieceData.pieceSize;
+
+        var directions = new List<Vector2Int> { new(0, 1), new(0, -1), new(1, 0), new(-1, 0) };
+
+        foreach (var direction in directions)
+            for (var x = 0; x < pieceSize.x; x++)
+                for (var y = 0; y < pieceSize.y; y++)
+                {
+                    var checkCell = piecePosition + direction + new Vector2Int(x, y);
+                    if (_boardGridController.IsValidGridCell(checkCell) && _boardPieces[checkCell] == neighbor)
+                        return true;
+                }
+
+        return false;
     }
     public List<Vector2Int> GetSurroundingEmptySpots(BoardPiece piece)
     {
