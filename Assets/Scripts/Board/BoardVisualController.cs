@@ -13,10 +13,8 @@ namespace Board
             if (size.x > size.y)
             {
                 cameraMain.orthographicSize = size.x * 1 / cameraMain.aspect / sizeOffset;
-                if (cameraMain.aspect < 1)
-                {
+                if (cameraMain.aspect < 1) 
                     cameraMain.orthographicSize *= 1.3f;
-                }
             }
             else
             {

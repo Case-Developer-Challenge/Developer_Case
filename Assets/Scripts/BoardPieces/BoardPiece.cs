@@ -44,7 +44,7 @@ public abstract class BoardPiece : MonoBehaviour
         if (_currentHealth <= 0)
         {
             IsActive = false;
-            PoolManager.Instance.ReturnToPool(this);
+            PoolManager.Instance.ReturnToPool(this,this.name);
             BoardManager.Instance.PieceDestroyed(this);
         }
     }

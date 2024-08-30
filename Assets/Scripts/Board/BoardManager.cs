@@ -30,7 +30,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
     public void CreateProductPiece(BoardPieceData boardPiece)
     {
         DeselectCurrentPiece();
-        _createdPiece = PoolManager.Instance.GetFromPool(boardPiece.boardPiecePrefab,boardPieceParent);
+        _createdPiece = PoolManager.Instance.GetFromPool(boardPiece.boardPiecePrefab, boardPiece.name, boardPieceParent);
         _createdPiece.Initialize(boardPiece);
     }
     public void MoveProductPiece(Vector3 worldPosition)
@@ -80,7 +80,7 @@ public class BoardManager : PersistentSingleton<BoardManager>
     }
     public void DestroyProduct()
     {
-        PoolManager.Instance.ReturnToPool(_createdPiece);
+        PoolManager.Instance.ReturnToPool(_createdPiece, _createdPiece.name);
         _createdPiece = null;
     }
     public bool SelectPiece(Vector3 worldPosition)
@@ -143,10 +143,10 @@ public class BoardManager : PersistentSingleton<BoardManager>
     }
     public void PieceDestroyed(BoardPiece boardPiece)
     {
-        if (_selectedPiece == boardPiece) 
+        if (_selectedPiece == boardPiece)
             DeselectCurrentPiece();
         for (var x = 0; x < boardPiece.BoardPieceData.pieceSize.x; x++)
-            for (var y = 0; y < boardPiece.BoardPieceData.pieceSize.y; y++) 
+            for (var y = 0; y < boardPiece.BoardPieceData.pieceSize.y; y++)
                 _boardPieces[new Vector2Int(boardPiece.BottomLeftCell.x + x, boardPiece.BottomLeftCell.y + y)] = null;
     }
     public bool CheckIfNeighbor(BoardPiece piece, BoardPiece neighbor)

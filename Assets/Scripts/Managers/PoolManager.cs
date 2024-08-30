@@ -5,53 +5,52 @@ namespace Managers
 {
     public class PoolManager : PersistentSingleton<PoolManager>
     {
-        private readonly Dictionary<string, Queue<BoardPiece>> _pools = new();
-        private void CreatePool(BoardPiece piecePrefab, int initialSize)
+        private readonly Dictionary<string, object> _pools = new();
+        private void CreatePool<T>(T prefab, string poolName, int initialSize) where T : MonoBehaviour
         {
-            var poolKey = piecePrefab.name;
+            if (_pools.ContainsKey(poolName)) return;
 
-            if (_pools.ContainsKey(poolKey)) return;
+            var pool = new Queue<T>();
+            _pools[poolName] = pool;
 
-            _pools[poolKey] = new Queue<BoardPiece>();
             for (var i = 0; i < initialSize; i++)
             {
-                var newPiece = Instantiate(piecePrefab);
-                newPiece.gameObject.SetActive(false);
-                _pools[poolKey].Enqueue(newPiece);
+                var newObject = Instantiate(prefab);
+                newObject.gameObject.SetActive(false);
+                pool.Enqueue(newObject);
             }
         }
-        public BoardPiece GetFromPool(BoardPiece piecePrefab, Transform parent = null)
+        public T GetFromPool<T>(T prefab, string poolName, Transform parent = null) where T : MonoBehaviour
         {
-            var poolKey = piecePrefab.name;
 
-            if (!_pools.ContainsKey(poolKey))
-                CreatePool(piecePrefab, 10);
+            if (!_pools.ContainsKey(poolName))
+                CreatePool(prefab, poolName, 10);
 
-            if (_pools[poolKey].Count == 0)
+            var pool = _pools[poolName] as Queue<T>;
+
+            if (pool.Count == 0)
             {
-                var newPiece = Instantiate(piecePrefab, parent);
-                newPiece.gameObject.SetActive(false);
-                return newPiece;
+                var newObject = Instantiate(prefab, parent);
+                newObject.gameObject.SetActive(false);
+                return newObject;
             }
 
-            var pieceToReturn = _pools[poolKey].Dequeue();
-            pieceToReturn.transform.parent = parent;
-            pieceToReturn.gameObject.SetActive(true);
-            return pieceToReturn;
+            var objectToReturn = pool.Dequeue();
+            objectToReturn.transform.parent = parent;
+            objectToReturn.gameObject.SetActive(true);
+            return objectToReturn;
         }
-        public void ReturnToPool(BoardPiece piece)
+        public void ReturnToPool<T>(T objectToReturn, string poolName) where T : MonoBehaviour
         {
-            var poolKey = piece.name;
+            objectToReturn.gameObject.SetActive(false);
 
-            // Deactivate the piece and return it to the pool
-            piece.gameObject.SetActive(false);
-
-            if (!_pools.ContainsKey(poolKey))
+            if (!_pools.ContainsKey(poolName))
             {
-                _pools[poolKey] = new Queue<BoardPiece>();
+                _pools[poolName] = new Queue<T>();
             }
 
-            _pools[poolKey].Enqueue(piece);
+            var pool = _pools[poolName] as Queue<T>;
+            pool?.Enqueue(objectToReturn);
         }
     }
 }
