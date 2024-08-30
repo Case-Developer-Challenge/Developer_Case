@@ -9,12 +9,19 @@ namespace Board
         {
             var cameraMain = Camera.main;
             cameraMain.transform.position = Vector3.back * 5;
-            float biggerSize;
+
             if (size.x > size.y)
-                biggerSize = size.x;
+            {
+                cameraMain.orthographicSize = size.x * 1 / cameraMain.aspect / sizeOffset;
+                if (cameraMain.aspect < 1)
+                {
+                    cameraMain.orthographicSize *= 1.3f;
+                }
+            }
             else
-                biggerSize = size.y;
-            cameraMain.orthographicSize = biggerSize * 1 / cameraMain.aspect / sizeOffset;
+            {
+                cameraMain.orthographicSize = size.y * 1 / cameraMain.aspect / sizeOffset;
+            }
         }
     }
 }

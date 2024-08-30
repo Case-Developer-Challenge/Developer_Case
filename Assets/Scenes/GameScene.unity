@@ -674,7 +674,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.95
+  m_fontSize: 27.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1727,7 +1727,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.85
+  m_fontSize: 29.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1824,7 +1824,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCellPrefab: {fileID: 7314670038522169719, guid: 26194a1714ef7be45a3faf2629c8f0ab, type: 3}
-  cellSpacing: 0
+  cellSpacing: 0.1
 --- !u!114 &1538622005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1840,8 +1840,8 @@ MonoBehaviour:
   boardGridParent: {fileID: 491373328}
   boardPieceParent: {fileID: 1905107879}
   background: {fileID: 323884545}
-  rows: 5
-  columns: 12
+  rows: 20
+  columns: 20
 --- !u!114 &1538622006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1854,6 +1854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c596c1209f2d4fddaa5c96e2e80a621d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sizeOffset: 1.15
 --- !u!1 &1628941772
 GameObject:
   m_ObjectHideFlags: 0
@@ -2047,7 +2048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -92, y: 224.99992}
+  m_AnchoredPosition: {x: -92, y: 621.70087}
   m_SizeDelta: {x: 184, y: 900}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1786356660
