@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MovingPiece : BoardPiece
 {
+    private const float AttackInterval = .6f;
     private float _speed;
     private float _damage;
     private Coroutine _moveCoroutine;
@@ -38,7 +39,7 @@ public class MovingPiece : BoardPiece
     }
     private IEnumerator MoveCoroutine()
     {
-        var waitDuration = new WaitForSeconds(10 / _speed);
+        var waitDuration = new WaitForSeconds(5 / _speed);
         while (gameObject.activeSelf)
         {
             yield return waitDuration;
@@ -56,6 +57,7 @@ public class MovingPiece : BoardPiece
         do
         {
             var surroundingEmptySpots = BoardManager.Instance.GetSurroundingEmptySpots(_targetPiece);
+            // sorting empty spots for attacking the closest
             surroundingEmptySpots.Sort((a, b) =>
             {
                 var pathLengthA = PathFind.CalculatePathLength(BottomLeftCell, a);
@@ -65,14 +67,14 @@ public class MovingPiece : BoardPiece
             });
             if (surroundingEmptySpots.Count == 0) // target not Reachable
                 yield break;
-            if (BoardManager.Instance.CheckIfNeighbor(_targetPiece, this))
+            if (BoardManager.Instance.CheckIfNeighbor(_targetPiece, this)) // doesn't need to move if already in position
                 break;
 
             _targetGrid = surroundingEmptySpots[0];
             yield return MoveCoroutine();
         } while (_targetGrid != BottomLeftCell);
 
-        var waitDuration = new WaitForSeconds(1);
+        var waitDuration = new WaitForSeconds(AttackInterval);
         while (_targetPiece.IsActive)
         {
             yield return waitDuration;

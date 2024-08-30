@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using Board;
 using Managers;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardGridController))]
+[RequireComponent(typeof(BoardVisualController))]
 public class BoardManager : PersistentSingleton<BoardManager>
 {
     [SerializeField] private Transform boardGridParent;

@@ -16,8 +16,7 @@ namespace Board
         {
             _rows = rows;
             _columns = columns;
-            foreach (Transform child in gridParent)
-                Destroy(child.gameObject);
+
             boundsSize.size = new Vector3(columns, rows);
             var cellWidth = (boundsSize.size.x - (_columns - 1) * cellSpacing) / _columns;
             var cellHeight = (boundsSize.size.y - (_rows - 1) * cellSpacing) / _rows;
@@ -53,7 +52,7 @@ namespace Board
             var bottomLeftCell = GetClosestCell(bottomLeft);
             var topRightCell = GetClosestCell(topRight);
 
-            if (IsValidGridCell(bottomLeftCell) && IsValidGridCell(topRightCell))
+            if (IsValidGridCell(bottomLeftCell) && IsValidGridCell(topRightCell)) //don't snap if not in range
             {
                 var snappedPosition = BoardToWorldPosition(topRightCell) - new Vector3((objectSize.x - 1) * CellSizeWithSpacing * .5f,
                     (objectSize.y - 1) * CellSizeWithSpacing * .5f, 0);

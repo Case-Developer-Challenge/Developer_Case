@@ -27,10 +27,21 @@ public class InputManager : PersistentSingleton<InputManager>
         if (_inputState == InputState.CreatingProduct)
             return;
 
-
         _inputState = InputState.CreatingProduct;
-
         BoardManager.Instance.CreateProductPiece(boardPiece);
+    }
+    private void IdleUpdate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
+
+            if (hit.collider is null) return;
+
+            if (BoardManager.Instance.SelectPiece(worldPosition)) 
+                _inputState = InputState.PieceSelected;
+        }
     }
     private void PieceSelectedUpdate()
     {
@@ -50,27 +61,12 @@ public class InputManager : PersistentSingleton<InputManager>
                 _inputState = InputState.Idle;
             }
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonDown(1)) //set target on right click
         {
             var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
             if (hit.collider is null) return;
             BoardManager.Instance.SetTargetToSelectedPiece(worldPosition);
-        }
-    }
-    private void IdleUpdate()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
-
-            if (hit.collider is null) return;
-
-            if (BoardManager.Instance.SelectPiece(worldPosition))
-            {
-                _inputState = InputState.PieceSelected;
-            }
         }
     }
     private void CreatingProductUpdate()
@@ -83,7 +79,7 @@ public class InputManager : PersistentSingleton<InputManager>
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (!BoardManager.Instance.IsProductInBounds(worldPosition))
+            if (!BoardManager.Instance.IsProductInBounds(worldPosition)) // destroy if trying to place outside
             {
                 BoardManager.Instance.DestroyProduct();
                 _inputState = InputState.Idle;
